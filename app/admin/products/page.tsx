@@ -23,7 +23,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Textarea } from "@/components/ui/textarea"
 import { Plus, Pencil, Trash2, ArrowLeft, Search } from "lucide-react"
-import type { Product } from "@/lib/types"
+import type { Product } from "@/lib/types/main"
 
 export default function AdminProductsPage() {
   const router = useRouter()
