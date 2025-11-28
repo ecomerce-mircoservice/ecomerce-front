@@ -17,6 +17,7 @@ import {
 import { addToCartAction } from "@/lib/actions/cart";
 import type { Product } from "@/lib/types/main";
 import { useFormState } from "react-dom";
+import { getImageUrl } from "@/lib/utils/image";
 
 const initialState = {
   success: false,
@@ -62,7 +63,7 @@ export function ProductDetailClient({
       <div className="grid gap-8 lg:grid-cols-2">
         <div className="relative aspect-square overflow-hidden rounded-xl bg-muted">
           <Image
-            src={product.imageUrl || "/placeholder.svg"}
+            src={getImageUrl(product.imageUrl)}
             alt={product.name}
             fill
             className="object-cover"
@@ -176,7 +177,7 @@ export function ProductDetailClient({
                 <div className="overflow-hidden rounded-xl border bg-card transition-shadow hover:shadow-lg">
                   <div className="relative aspect-square bg-muted">
                     <Image
-                      src={p.imageUrl || "/placeholder.svg"}
+                      src={getImageUrl(p.imageUrl)}
                       alt={p.name}
                       fill
                       className="object-cover transition-transform group-hover:scale-105"

@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { Star, ShoppingCart } from "lucide-react";
 import { toast } from "sonner";
+import { getImageUrl } from "@/lib/utils/image";
 
 interface ProductCardProps {
   product: Product;
@@ -29,7 +30,7 @@ export function ProductCard({ product, onAddToCart }: ProductCardProps) {
       <Link href={`/products/${product.id}`}>
         <div className="relative aspect-square overflow-hidden bg-muted">
           <Image
-            src={product.imageUrl || "/placeholder.svg"}
+            src={getImageUrl(product.imageUrl)}
             alt={product.name}
             fill
             className="object-cover transition-transform group-hover:scale-105"

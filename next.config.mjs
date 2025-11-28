@@ -5,7 +5,20 @@ const nextConfig = {
   },
   images: {
     unoptimized: true,
+    remotePatterns: [
+      {
+        protocol: "http",
+        hostname: "localhost",
+        port: "8080",
+        pathname: "/uploads/**",
+      },
+      {
+        protocol: "https",
+        hostname: "**",
+        pathname: "/uploads/**",
+      },
+    ],
   },
-}
+};
 
-export default nextConfig
+export default nextConfig;

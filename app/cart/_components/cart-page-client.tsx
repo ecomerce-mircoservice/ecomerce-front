@@ -14,6 +14,7 @@ import {
 import { Minus, Plus, Trash2, ShoppingBag, ArrowRight } from "lucide-react";
 import { updateCartItemAction, removeFromCartAction } from "@/lib/actions/cart";
 import type { CartResponse } from "@/lib/types/main";
+import { getImageUrl } from "@/lib/utils/image";
 
 const initialState = {
   success: false,
@@ -76,7 +77,7 @@ export function CartPageClient({ cart, isAuthenticated }: CartPageClientProps) {
                 <div className="flex gap-4">
                   <div className="relative h-24 w-24 shrink-0 overflow-hidden rounded-lg bg-muted">
                     <Image
-                      src={item.product.imageUrl || "/placeholder.svg"}
+                      src={getImageUrl(item.product.imageUrl)}
                       alt={item.product.name}
                       fill
                       className="object-cover"

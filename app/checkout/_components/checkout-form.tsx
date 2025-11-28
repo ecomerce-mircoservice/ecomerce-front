@@ -18,6 +18,7 @@ import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Loader2 } from "lucide-react";
 import { createOrderAction } from "@/lib/actions/orders";
 import type { CartItem } from "@/lib/types/main";
+import { getImageUrl } from "@/lib/utils/image";
 
 const initialState = {
   success: false,
@@ -199,7 +200,7 @@ export function CheckoutForm({ cart, cartTotal }: CheckoutFormProps) {
                 <div key={item.product.id} className="flex gap-3">
                   <div className="relative h-16 w-16 shrink-0 overflow-hidden rounded-lg bg-muted">
                     <Image
-                      src={item.product.imageUrl || "/placeholder.svg"}
+                      src={getImageUrl(item.product.imageUrl)}
                       alt={item.product.name}
                       fill
                       className="object-cover"

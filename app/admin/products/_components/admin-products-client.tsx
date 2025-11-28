@@ -34,6 +34,7 @@ import {
 import { Textarea } from "@/components/ui/textarea";
 import { Plus, Pencil, Trash2, ArrowLeft, Search } from "lucide-react";
 import type { Product } from "@/lib/types/main";
+import { getImageUrl } from "@/lib/utils/image";
 
 const categories = [
   "All",
@@ -303,7 +304,7 @@ export function AdminProductsClient({
                       <div className="flex items-center gap-3">
                         <div className="relative h-12 w-12 shrink-0 overflow-hidden rounded-lg bg-muted">
                           <Image
-                            src={product.imageUrl || "/placeholder.svg"}
+                            src={getImageUrl(product.imageUrl)}
                             alt={product.name}
                             fill
                             className="object-cover"
