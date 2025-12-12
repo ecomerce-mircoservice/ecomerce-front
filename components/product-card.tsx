@@ -19,9 +19,8 @@ export function ProductCard({ product, onAddToCart }: ProductCardProps) {
     if (onAddToCart) {
       onAddToCart(product);
     } else {
-      toast.success("Added to cart", {
-        description: `${product.name} has been added to your cart.`,
-      });
+      // FIX: Redirect to product details instead of fake add
+      window.location.href = `/products/${product.id}`;
     }
   };
 
@@ -74,7 +73,7 @@ export function ProductCard({ product, onAddToCart }: ProductCardProps) {
           disabled={product.stockQuantity === 0 || !product.active}
         >
           <ShoppingCart className="mr-2 h-4 w-4" />
-          Add
+          View Details
         </Button>
       </CardFooter>
     </Card>

@@ -16,15 +16,32 @@ const authApi = createApiResource<AuthResponse, LoginDTO, RegisterDTO>(
   "api/v1/auth"
 );
 
-// Authentication methods
 export async function login(
   credentials: LoginDTO
 ): Promise<ApiResponse<AuthResponse>> {
   // POST /api/v1/auth/login
-  return await authApi.postResource<AuthResponse, LoginDTO>(
+  const response = await authApi.postResource<AuthResponse, LoginDTO>(
     "login",
     credentials
   );
+
+  // 💡 FIX: Set the token cookie upon successful login
+  if (response.success && response.data?.token) {
+    const cookieStore = await getCookieStore();
+    
+    // Check for expiration in the response if provided, otherwise set a max age.
+    // Assuming the token is valid for 1 hour (3600 seconds)
+    const expirationSeconds = 3600; 
+
+    cookieStore.set("token", response.data.token, {
+      httpOnly: true, // IMPORTANT for security
+      secure: process.env.NODE_ENV === "production",
+      maxAge: expirationSeconds, 
+      path: "/",
+    });
+  }
+
+  return response;
 }
 
 export async function register(

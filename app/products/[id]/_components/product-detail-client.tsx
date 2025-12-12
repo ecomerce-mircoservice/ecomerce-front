@@ -1,11 +1,13 @@
 "use client";
 
-import { useActionState, useState } from "react";
+// 1. FIX: Import useTransition
+import { useActionState, useState, useTransition, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { toast } from "sonner";
 import {
   Star,
   Minus,
@@ -38,14 +40,41 @@ export function ProductDetailClient({
   const [state, formAction] = useActionState(addToCartAction, initialState);
   const [selectedImage, setSelectedImage] = useState(product.mainImage);
 
+  // 2. FIX: Initialize useTransition
+  const [isPending, startTransition] = useTransition();
+
+  // 3. FIX: Watch state changes for success/error
+  useEffect(() => {
+    if (state.success) {
+      setAdded(true);
+      toast.success("Added to cart", {
+        description: `${product.name} has been added to your cart.`,
+      });
+      setTimeout(() => setAdded(false), 2000);
+    } else if (state.errors?.userId) {
+      toast.error("Authentication required", {
+        description: "Please log in to add items to your cart.",
+        action: {
+          label: "Login",
+          onClick: () => router.push("/login"),
+        }
+      });
+    } else if (state.errors?.general) {
+      toast.error("Error", {
+        description: state.errors.general[0]
+      });
+    }
+  }, [state, product.name, router]);
+
+  // 4. FIX: simple wrapper around formAction
   const handleAddToCart = async () => {
     const formData = new FormData();
     formData.append("productId", product.id.toString());
     formData.append("quantity", quantity.toString());
 
-    await formAction(formData);
-    setAdded(true);
-    setTimeout(() => setAdded(false), 2000);
+    startTransition(() => {
+      formAction(formData);
+    });
   };
 
   return (
@@ -61,7 +90,7 @@ export function ProductDetailClient({
       </Button>
 
       <div className="grid gap-8 lg:grid-cols-2">
-      <div>
+        <div>
           <div className="relative aspect-square overflow-hidden rounded-xl bg-muted">
             <Image
               src={getImageUrl(selectedImage)}
@@ -82,15 +111,15 @@ export function ProductDetailClient({
           </div>
           <div className="mt-4 grid grid-cols-5 gap-4">
             <div
-                className={`relative aspect-square cursor-pointer overflow-hidden rounded-md ${selectedImage === product.mainImage ? "ring-2 ring-primary" : ""}`}
-                onClick={() => setSelectedImage(product.mainImage)}
+              className={`relative aspect-square cursor-pointer overflow-hidden rounded-md ${selectedImage === product.mainImage ? "ring-2 ring-primary" : ""}`}
+              onClick={() => setSelectedImage(product.mainImage)}
             >
-                <Image
-                    src={getImageUrl(product.mainImage)}
-                    alt="Main product image"
-                    fill
-                    className="object-cover"
-                />
+              <Image
+                src={getImageUrl(product.mainImage)}
+                alt="Main product image"
+                fill
+                className="object-cover"
+              />
             </div>
             {product.secondaryImages?.map((image, index) => (
               <div
@@ -119,11 +148,10 @@ export function ProductDetailClient({
                 {[...Array(5)].map((_, i) => (
                   <Star
                     key={i}
-                    className={`h-5 w-5 ${
-                      i < Math.floor(product.rating || 0)
-                        ? "fill-chart-3 text-chart-3"
-                        : "fill-muted text-muted"
-                    }`}
+                    className={`h-5 w-5 ${i < Math.floor(product.rating || 0)
+                      ? "fill-chart-3 text-chart-3"
+                      : "fill-muted text-muted"
+                      }`}
                   />
                 ))}
               </div>
@@ -172,9 +200,15 @@ export function ProductDetailClient({
                 size="lg"
                 className="flex-1"
                 onClick={handleAddToCart}
-                disabled={product.stockQuantity === 0 || added}
+                // 4. FIX (Recommended): Use isPending for visual state
+                disabled={product.stockQuantity === 0 || added || isPending}
               >
-                {added ? (
+                {isPending ? (
+                  <>
+                    <ShoppingCart className="mr-2 h-5 w-5 animate-spin" />
+                    Adding...
+                  </>
+                ) : added ? (
                   <>
                     <Check className="mr-2 h-5 w-5" />
                     Added to Cart
