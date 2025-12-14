@@ -124,6 +124,12 @@ export function Header({ user, cartCount, isAuthenticated }: HeaderProps) {
                 </div>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem asChild>
+                  <Link href="/profile" className="cursor-pointer">
+                    <User className="mr-2 h-4 w-4" />
+                    My Profile
+                  </Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem asChild>
                   <Link href="/orders" className="cursor-pointer">
                     <Package className="mr-2 h-4 w-4" />
                     My Orders
