@@ -18,14 +18,14 @@ export const addressSchema = z.object({
 
 export const createOrderSchema = z.object({
   customerId: z.number().positive("Customer ID is required"),
-  shippingAddress: addressSchema,
-  orderItems: z.array(
+  shippingAddress: z.string().min(1, "Shipping address is required"),
+  items: z.array(
     z.object({
       productId: z.number().positive("Product ID is required"),
       quantity: z.number().int().positive("Quantity must be positive"),
       price: z.number().positive("Price must be positive"),
     })
-  ),
+  ).optional(), // Items are optional - backend pulls from cart if empty
 });
 
 export const updateOrderSchema = z.object({
@@ -43,38 +43,38 @@ export const updateOrderSchema = z.object({
 });
 
 export const cancelOrderSchema = z.object({
-    id: z.preprocess((val) => Number(val), z.number()),
+  id: z.preprocess((val) => Number(val), z.number()),
 });
 
 // --- Field Configurations for Forms ---
 
 export const updateOrderRenderedFields: FieldConfig[] = [
-    {
-        name: "id",
-        type: "hidden",
-        required: true,
-    },
-    {
-        name: "status",
-        label: "Order Status",
-        type: "select",
-        placeholder: "Select status",
-        options: [
-            { value: "PENDING", label: "Pending" },
-            { value: "CONFIRMED", label: "Confirmed" },
-            { value: "PROCESSING", label: "Processing" },
-            { value: "SHIPPED", label: "Shipped" },
-            { value: "DELIVERED", label: "Delivered" },
-            { value: "CANCELLED", label: "Cancelled" },
-        ],
-        required: true,
-    },
+  {
+    name: "id",
+    type: "hidden",
+    required: true,
+  },
+  {
+    name: "status",
+    label: "Order Status",
+    type: "select",
+    placeholder: "Select status",
+    options: [
+      { value: "PENDING", label: "Pending" },
+      { value: "CONFIRMED", label: "Confirmed" },
+      { value: "PROCESSING", label: "Processing" },
+      { value: "SHIPPED", label: "Shipped" },
+      { value: "DELIVERED", label: "Delivered" },
+      { value: "CANCELLED", label: "Cancelled" },
+    ],
+    required: true,
+  },
 ];
 
 export const deleteOrderRenderedFields: FieldConfig[] = [
-    {
-        name: "id",
-        type: "hidden",
-        required: true,
-    },
+  {
+    name: "id",
+    type: "hidden",
+    required: true,
+  },
 ];

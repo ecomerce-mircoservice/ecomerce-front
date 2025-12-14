@@ -6,6 +6,8 @@ import { createApiResource } from "../network/utils/base";
 import { createOrderSchema, updateOrderSchema } from "../schema/order";
 import { UpdateOrderStatusDTO } from "../types/entities/order";
 import { CreateOrderDTO, Order } from "../types/main";
+import { getCurrentUser } from "../network/api/auth";
+import { getCart, clearCart } from "../network/api/cart";
 
 // Create the Orders API resource - base path is /api/v1/orders
 const ordersApi = createApiResource<
@@ -21,15 +23,38 @@ export async function createOrderAction(
   formData: FormData
 ): Promise<State> {
   try {
+    // Get current user
+    const user = await getCurrentUser();
+    if (!user || !user.id) {
+      return {
+        success: false,
+        errors: { general: ["Authentication required"] },
+      };
+    }
+
+    // Get cart items
+    const cart = await getCart(user.id);
+    if (!cart || !cart.items || cart.items.length === 0) {
+      return {
+        success: false,
+        errors: { general: ["Cart is empty"] },
+      };
+    }
+
+    // Build shipping address as a single string (backend requirement)
+    const fullName = formData.get("fullName") as string;
+    const street = formData.get("street") as string;
+    const city = formData.get("city") as string;
+    const state = formData.get("state") as string;
+    const zipCode = formData.get("zipCode") as string;
+    const country = formData.get("country") as string;
+
+    const shippingAddressString = `${fullName}, ${street}, ${city}, ${state} ${zipCode}, ${country}`;
+
     const data = {
-      shippingAddress: {
-        fullName: formData.get("fullName") as string,
-        street: formData.get("street") as string,
-        city: formData.get("city") as string,
-        state: formData.get("state") as string,
-        zipCode: formData.get("zipCode") as string,
-        country: formData.get("country") as string,
-      },
+      customerId: user.id,
+      shippingAddress: shippingAddressString,
+      items: [], // Empty array - backend will pull from cart automatically
     };
 
     const parsed = createOrderSchema.safeParse(data);
@@ -41,6 +66,10 @@ export async function createOrderAction(
     }
 
     const response = await ordersApi.create(parsed.data);
+
+    // Clear cart after successful order
+    await clearCart(user.id);
+
     revalidatePath("/orders");
     revalidatePath("/cart");
 

@@ -12,17 +12,29 @@ export async function handleAction<T, CreateDTO, UpdateDTO>(
   revalidatePaths?: string | string[] // New parameter
 ): Promise<State> {
   try {
-    // In the data Convert every Numeric value to a number
-    const transformedData: Record<string, string | number | File> = {};
-    for (const key in data as Record<string, string | number | File>) {
+    // Transform data while preserving File objects
+    const transformedData: Record<string, string | number | File | File[]> = {};
+    for (const key in data as Record<string, string | number | File | File[]>) {
       const value = (data as Record<string, any>)[key];
-      if (typeof value === "string" && !isNaN(Number(value))) {
+
+      // Preserve File objects
+      if (value instanceof File) {
+        transformedData[key] = value;
+      }
+      // Preserve File arrays
+      else if (Array.isArray(value) && value.every(v => v instanceof File)) {
+        transformedData[key] = value;
+      }
+      // Convert numeric strings to numbers
+      else if (typeof value === "string" && !isNaN(Number(value)) && value.trim() !== "") {
         transformedData[key] = Number(value);
-      } else {
+      }
+      // Keep everything else as-is
+      else {
         transformedData[key] = value;
       }
     }
-    logger.debug({ data: transformedData }, 'Transformed form data');
+    logger.debug({ data: Object.keys(transformedData) }, 'Transformed form data keys');
     const parsed = schema.safeParse(transformedData);
     if (!parsed.success) {
       const fieldErrors = parsed.error.flatten().fieldErrors;

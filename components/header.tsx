@@ -70,7 +70,7 @@ export function Header({ user, cartCount, isAuthenticated }: HeaderProps) {
             >
               Products
             </Link>
-            {isAuthenticated && user?.roles === "ROLE_ADMIN" && (
+            {isAuthenticated && (user?.roles === "ROLE_ADMIN" || user?.roles?.includes?.("ROLE_ADMIN")) && (
               <Link
                 href="/admin"
                 className="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
@@ -129,7 +129,7 @@ export function Header({ user, cartCount, isAuthenticated }: HeaderProps) {
                     My Orders
                   </Link>
                 </DropdownMenuItem>
-                {user?.roles === "ROLE_ADMIN" && (
+                {(user?.roles === "ROLE_ADMIN" || user?.roles?.includes?.("ROLE_ADMIN")) && (
                   <DropdownMenuItem asChild>
                     <Link href="/admin" className="cursor-pointer">
                       <LayoutDashboard className="mr-2 h-4 w-4" />
@@ -182,7 +182,7 @@ export function Header({ user, cartCount, isAuthenticated }: HeaderProps) {
                 <Link href="/products" className="text-lg font-medium">
                   Products
                 </Link>
-                {isAuthenticated && user?.roles === "ROLE_ADMIN" && (
+                {isAuthenticated && (user?.roles === "ROLE_ADMIN" || user?.roles?.includes?.("ROLE_ADMIN")) && (
                   <Link href="/admin" className="text-lg font-medium">
                     Admin
                   </Link>

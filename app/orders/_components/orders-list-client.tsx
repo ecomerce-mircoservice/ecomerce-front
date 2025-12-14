@@ -67,7 +67,7 @@ export function OrdersListClient({ orders }: OrdersListClientProps) {
                 variant="outline"
                 className={
                   statusColors[
-                    order.status.toLowerCase() as keyof typeof statusColors
+                  order.status.toLowerCase() as keyof typeof statusColors
                   ] || statusColors.pending
                 }
               >
@@ -78,8 +78,8 @@ export function OrdersListClient({ orders }: OrdersListClientProps) {
               <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
                 <div>
                   <p className="text-sm text-muted-foreground">
-                    {order.orderItems.length} item
-                    {order.orderItems.length !== 1 && "s"}
+                    {order.orderItems?.length || 0} item
+                    {(order.orderItems?.length || 0) !== 1 && "s"}
                   </p>
                   <p className="mt-1 font-semibold">
                     ${order.totalAmount.toFixed(2)}

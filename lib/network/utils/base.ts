@@ -367,21 +367,28 @@ export class ApiResource<T, CreateDTO = T, UpdateDTO = Partial<T>> {
   private formDataToObject(formData: FormData): Record<string, string | File | File[]> {
     const data: Record<string, string | File | File[]> = {};
     const keys = Array.from(formData.keys());
-  
+
     for (const key of keys) {
       const values = formData.getAll(key);
-  
+
       // Skip empty values
       if (values.every(value => value === null || value === undefined || value === "")) {
         continue;
       }
-  
+
       if (values.length > 1) {
-        // If there are multiple values, it's an array of files or strings
-        data[key] = values.filter(v => v instanceof File) as File[]
+        // If there are multiple values, filter for files
+        const files = values.filter(v => v instanceof File) as File[];
+        // Only add if there are actual files
+        if (files.length > 0) {
+          data[key] = files;
+        }
       } else if (values[0] instanceof File) {
-        // If it's a single file
-        data[key] = values[0];
+        // If it's a single file, check if it's a real file (not empty placeholder)
+        const file = values[0] as File;
+        if (file.size > 0 || file.name) {
+          data[key] = file;
+        }
       } else {
         // If it's a single string value
         data[key] = values[0] as string;
@@ -394,11 +401,14 @@ export class ApiResource<T, CreateDTO = T, UpdateDTO = Partial<T>> {
    */
   private toFormData(data: Record<string, string | File | number | File[]>): FormData {
     const formData = new FormData();
+    logger.debug({ data: Object.keys(data) }, 'Converting to FormData - keys');
     for (const key in data) {
       const value = data[key];
       if (value instanceof File) {
         formData.append(key, value, value.name);
+        logger.debug({ key, fileName: value.name, size: value.size }, 'Appending file');
       } else if (Array.isArray(value)) {
+        logger.debug({ key, arrayLength: value.length }, 'Appending array');
         for (const item of value) {
           if (item instanceof File) {
             formData.append(key, item, item.name);
@@ -407,6 +417,7 @@ export class ApiResource<T, CreateDTO = T, UpdateDTO = Partial<T>> {
       }
       else if (value !== null && value !== undefined) {
         formData.append(key, String(value));
+        logger.debug({ key, value: String(value) }, 'Appending value');
       }
     }
     return formData;

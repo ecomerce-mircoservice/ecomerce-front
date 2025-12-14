@@ -8,20 +8,33 @@ import { z } from "zod";
 
 export const createProductSchema = z.object({
     name: z.string().min(1, "Product name is required"),
-    description: z.string().min(1, "Description is required"),
+    description: z.string().optional(), // Made optional
     price: z.preprocess(
         (val) => Number(val),
         z.number().positive("Price must be a positive number")
     ),
     category: z.string().min(1, "Category is required"),
-    mainImage: z.instanceof(File, { message: "Image file is required" }), // File input handled separately in BaseForm
-    secondaryImages: z.array(z.instanceof(File, { message: "Image file is required" })).optional(), // File input handled separately in BaseForm
+    mainImage: z.instanceof(File, { message: "Image file is required" }),
+    secondaryImages: z.preprocess(
+        (val) => {
+            // If it's undefined, null, or empty array, return undefined
+            if (!val || (Array.isArray(val) && val.length === 0)) {
+                return undefined;
+            }
+            // If it's not an array, return undefined
+            if (!Array.isArray(val)) {
+                return undefined;
+            }
+            return val;
+        },
+        z.array(z.instanceof(File)).optional()
+    ),
     stockQuantity: z.preprocess(
         (val) => Number(val),
         z.number().int().nonnegative("Stock must be a non-negative integer")
     ),
     active: z.boolean().default(true),
-    rating: z.number().min(0).max(5).optional(),
+    rating: z.number().min(0).max(5).default(5), // Default to 5 stars
 });
 
 export const updateProductSchema = z.object({
@@ -60,24 +73,24 @@ export const createProductRenderedFields: FieldConfig[] = [
     },
     {
         name: "description",
-        label: "Description",
+        label: "Description (Optional)",
         type: "textarea",
-        placeholder: "Enter product description",
-        required: true,
+        placeholder: "Enter product description (optional)",
+        required: false,
         rows: 4,
     },
     {
         name: "price",
         label: "Price ($)",
         type: "number",
-        placeholder: "0.00",
+        placeholder: "19.99",
         required: true,
     },
     {
         name: "stockQuantity",
         label: "Stock Quantity",
         type: "number",
-        placeholder: "0",
+        placeholder: "100",
         required: true,
     },
     {
@@ -106,12 +119,12 @@ export const createProductRenderedFields: FieldConfig[] = [
     },
     {
         name: "secondaryImages",
-        label: "Secondary Product Images",
+        label: "Secondary Product Images (Optional)",
         type: "file",
         required: false,
         accept: "image/*",
         variant: "dropzone",
-        multiple: true
+        multiple: true,
     },
     // Active and Rating can be handled with default values or specific fields if needed
 ];

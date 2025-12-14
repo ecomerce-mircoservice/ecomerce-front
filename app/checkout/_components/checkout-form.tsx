@@ -18,6 +18,7 @@ import { Loader2 } from "lucide-react";
 import { createOrderAction } from "@/lib/actions/orders";
 import type { CartItem } from "@/lib/types/main";
 import { getImageUrl } from "@/lib/utils/image";
+import { toast } from "sonner";
 
 const initialState = {
   success: false,
@@ -35,11 +36,24 @@ export function CheckoutForm({ cart, cartTotal }: CheckoutFormProps) {
     createOrderAction,
     initialState
   );
+
   useEffect(() => {
     if (state.success) {
-      router.push("/orders");
+      toast.success("Order placed successfully!", {
+        description: "Your order has been confirmed. Redirecting to products page...",
+        duration: 5000,
+      });
+      // Delay redirect slightly so user sees the toast
+      setTimeout(() => {
+        router.push("/products");
+      }, 1500);
+    } else if (state.errors?.general) {
+      toast.error("Failed to place order", {
+        description: state.errors.general[0],
+        duration: 5000,
+      });
     }
-  }, [state.success, router]);
+  }, [state.success, state.errors, router]);
 
   if (cart.length === 0 && !state.success) {
     router.push("/cart");

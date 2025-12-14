@@ -192,8 +192,8 @@ export function AdminDashboardClient({
                       {order.orderNumber}
                     </p>
                     <p className="text-sm text-muted-foreground">
-                      {order.orderItems.length} items •{" "}
-                      {new Date(order.createdAt).toLocaleDateString()}
+                      {order.orderItems?.length || 0} items •{" "}
+                      {new Date(order.createdAt).toLocaleDateString("en-US")}
                     </p>
                   </div>
                   <div className="text-right">

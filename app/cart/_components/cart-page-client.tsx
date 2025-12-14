@@ -14,7 +14,8 @@ import { Minus, Plus, Trash2, ShoppingBag, ArrowRight } from "lucide-react";
 import { updateCartItemAction, removeFromCartAction } from "@/lib/actions/cart";
 import type { CartResponse } from "@/lib/types/main";
 import { getImageUrl } from "@/lib/utils/image";
-import { useActionState } from "react";
+import { useActionState, useTransition, useEffect } from "react";
+import { toast } from "sonner";
 
 const initialState = {
   success: false,
@@ -27,20 +28,42 @@ interface CartPageClientProps {
 }
 
 export function CartPageClient({ cart, isAuthenticated }: CartPageClientProps) {
-  const [, updateAction] = useActionState(updateCartItemAction, initialState);
-  const [, removeAction] = useActionState(removeFromCartAction, initialState);
+  const [updateState, updateAction] = useActionState(updateCartItemAction, initialState);
+  const [removeState, removeAction] = useActionState(removeFromCartAction, initialState);
+  const [isPending, startTransition] = useTransition();
+
+  // Show toast notifications based on action results
+  useEffect(() => {
+    if (updateState.success) {
+      toast.success("Cart updated");
+    } else if (updateState.errors?.general) {
+      toast.error(updateState.errors.general[0]);
+    }
+  }, [updateState]);
+
+  useEffect(() => {
+    if (removeState.success) {
+      toast.success("Item removed from cart");
+    } else if (removeState.errors?.general) {
+      toast.error(removeState.errors.general[0]);
+    }
+  }, [removeState]);
 
   const handleUpdateQuantity = async (productId: number, quantity: number) => {
     const formData = new FormData();
     formData.append("productId", productId.toString());
     formData.append("quantity", quantity.toString());
-    await updateAction(formData);
+    startTransition(() => {
+      updateAction(formData);
+    });
   };
 
   const handleRemove = async (productId: number) => {
     const formData = new FormData();
     formData.append("productId", productId.toString());
-    await removeAction(formData);
+    startTransition(() => {
+      removeAction(formData);
+    });
   };
 
   if (!cart?.items || cart.items.length === 0) {

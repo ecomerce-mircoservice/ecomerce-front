@@ -121,20 +121,22 @@ export function ProductDetailClient({
                 className="object-cover"
               />
             </div>
-            {product.secondaryImages?.map((image, index) => (
-              <div
-                key={index}
-                className={`relative aspect-square cursor-pointer overflow-hidden rounded-md ${selectedImage === image ? "ring-2 ring-primary" : ""}`}
-                onClick={() => setSelectedImage(image)}
-              >
-                <Image
-                  src={getImageUrl(image)}
-                  alt={`Secondary product image ${index + 1}`}
-                  fill
-                  className="object-cover"
-                />
-              </div>
-            ))}
+            {product.secondaryImages
+              ?.filter(image => image && !image.includes('undefined'))
+              .map((image, index) => (
+                <div
+                  key={index}
+                  className={`relative aspect-square cursor-pointer overflow-hidden rounded-md ${selectedImage === image ? "ring-2 ring-primary" : ""}`}
+                  onClick={() => setSelectedImage(image)}
+                >
+                  <Image
+                    src={getImageUrl(image)}
+                    alt={`Secondary product image ${index + 1}`}
+                    fill
+                    className="object-cover"
+                  />
+                </div>
+              ))}
           </div>
         </div>
 
