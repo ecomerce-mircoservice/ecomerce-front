@@ -39,8 +39,8 @@ export interface Order {
 // DTOs for Order operations
 export interface CreateOrderDTO {
   customerId: number;
-  shippingAddress: Address;
-  orderItems: OrderItem[];
+  shippingAddress: string;
+  items: OrderItem[];
 }
 
 export interface UpdateOrderStatusDTO {

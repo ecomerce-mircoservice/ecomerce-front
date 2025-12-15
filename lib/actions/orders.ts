@@ -16,7 +16,6 @@ const ordersApi = createApiResource<
   UpdateOrderStatusDTO
 >("api/v1/orders");
 
-
 // Server Actions
 export async function createOrderAction(
   prevState: State,
@@ -65,7 +64,7 @@ export async function createOrderAction(
       };
     }
 
-    const response = await ordersApi.create(parsed.data);
+    const response = await ordersApi.create(parsed.data as CreateOrderDTO);
 
     // Clear cart after successful order
     await clearCart(user.id);
