@@ -1,18 +1,18 @@
+/* Import Google Fonts first - must come before other imports for Turbopack */
+@import url("https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700&family=Inter:wght@400;500&family=JetBrains+Mono:wght@400;500&display=swap");
+
 @import "tailwindcss";
 @import "tw-animate-css";
 
-/* Import Vault Design System Fonts */
-@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700&family=Inter:wght@400;500&family=JetBrains+Mono:wght@400;500&display=swap');
-
 @theme {
   --color-vault-charcoal: #121212;
-  --color-vault-mint: #00E676;
-  --color-vault-slate: #2C3E50;
-  --color-vault-light-grey: #F4F6F8;
+  --color-vault-mint: #00e676;
+  --color-vault-slate: #2c3e50;
+  --color-vault-light-grey: #f4f6f8;
 
-  --font-montserrat: 'Montserrat', sans-serif;
-  --font-inter: 'Inter', sans-serif;
-  --font-mono: 'JetBrains Mono', monospace;
+  --font-montserrat: "Montserrat", sans-serif;
+  --font-inter: "Inter", sans-serif;
+  --font-mono: "JetBrains Mono", monospace;
 
   --color-background: var(--background);
   --color-foreground: var(--foreground);
@@ -40,53 +40,53 @@
 }
 
 :root {
-  --background: #F0F2F5;
+  --background: #f0f2f5;
   --foreground: #121212;
-  --card: #FFFFFF;
+  --card: #ffffff;
   --card-foreground: #121212;
-  --popover: #FFFFFF;
+  --popover: #ffffff;
   --popover-foreground: #121212;
-  --primary: #00E676;
+  --primary: #00e676;
   --primary-foreground: #121212;
-  --secondary: #F4F6F8;
+  --secondary: #f4f6f8;
   --secondary-foreground: #121212;
-  --muted: #F4F6F8;
-  --muted-foreground: #2C3E50;
-  --accent: #00E676;
-  --accent-foreground: #FFFFFF;
-  --destructive: #EF4444;
-  --destructive-foreground: #FFFFFF;
-  --border: #F4F6F8;
-  --input: #F4F6F8;
-  --ring: #00E676;
+  --muted: #f4f6f8;
+  --muted-foreground: #2c3e50;
+  --accent: #00e676;
+  --accent-foreground: #ffffff;
+  --destructive: #ef4444;
+  --destructive-foreground: #ffffff;
+  --border: #f4f6f8;
+  --input: #f4f6f8;
+  --ring: #00e676;
   --radius: 0.25rem;
 }
 
 .dark {
   --background: #121212;
-  --foreground: #FFFFFF;
-  --card: #1E1E1E;
-  --card-foreground: #FFFFFF;
-  --popover: #1E1E1E;
-  --popover-foreground: #FFFFFF;
-  --primary: #00E676;
+  --foreground: #ffffff;
+  --card: #1e1e1e;
+  --card-foreground: #ffffff;
+  --popover: #1e1e1e;
+  --popover-foreground: #ffffff;
+  --primary: #00e676;
   --primary-foreground: #121212;
-  --secondary: #1E1E1E;
-  --secondary-foreground: #FFFFFF;
-  --muted: #1E1E1E;
-  --muted-foreground: #9CA3AF;
-  --accent: #00E676;
+  --secondary: #1e1e1e;
+  --secondary-foreground: #ffffff;
+  --muted: #1e1e1e;
+  --muted-foreground: #9ca3af;
+  --accent: #00e676;
   --accent-foreground: #121212;
-  --destructive: #EF4444;
-  --destructive-foreground: #FFFFFF;
+  --destructive: #ef4444;
+  --destructive-foreground: #ffffff;
   --border: #262626;
   --input: #262626;
-  --ring: #00E676;
+  --ring: #00e676;
 }
 
 /* Typography System */
 body {
-  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  font-family: "Inter", system-ui, -apple-system, sans-serif;
 }
 
 h1,
@@ -95,7 +95,7 @@ h3,
 h4,
 h5,
 h6 {
-  font-family: 'Montserrat', sans-serif;
+  font-family: "Montserrat", sans-serif;
   font-weight: 700;
 }
 
@@ -103,7 +103,7 @@ h6 {
 .font-mono,
 code,
 pre {
-  font-family: 'JetBrains Mono', 'Courier New', monospace;
+  font-family: "JetBrains Mono", "Courier New", monospace;
 }
 
 /* Vault Floating Cards */
@@ -148,7 +148,6 @@ pre {
 
 /* Skeleton loader with pulse */
 @keyframes vault-pulse {
-
   0%,
   100% {
     opacity: 1;
@@ -161,7 +160,12 @@ pre {
 
 .vault-skeleton {
   animation: vault-pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
-  background: linear-gradient(90deg, rgb(var(--muted)) 0%, rgb(var(--muted-foreground) / 0.1) 50%, rgb(var(--muted)) 100%);
+  background: linear-gradient(
+    90deg,
+    rgb(var(--muted)) 0%,
+    rgb(var(--muted-foreground) / 0.1) 50%,
+    rgb(var(--muted)) 100%
+  );
   background-size: 200% 100%;
   animation: vault-skeleton-loading 1.5s ease-in-out infinite;
 }

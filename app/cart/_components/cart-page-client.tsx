@@ -28,8 +28,14 @@ interface CartPageClientProps {
 }
 
 export function CartPageClient({ cart, isAuthenticated }: CartPageClientProps) {
-  const [updateState, updateAction] = useActionState(updateCartItemAction, initialState);
-  const [removeState, removeAction] = useActionState(removeFromCartAction, initialState);
+  const [updateState, updateAction] = useActionState(
+    updateCartItemAction,
+    initialState
+  );
+  const [removeState, removeAction] = useActionState(
+    removeFromCartAction,
+    initialState
+  );
   const [isPending, startTransition] = useTransition();
 
   // Show toast notifications based on action results
@@ -48,7 +54,6 @@ export function CartPageClient({ cart, isAuthenticated }: CartPageClientProps) {
       toast.error(removeState.errors.general[0]);
     }
   }, [removeState]);
-
   const handleUpdateQuantity = async (productId: number, quantity: number) => {
     const formData = new FormData();
     formData.append("productId", productId.toString());

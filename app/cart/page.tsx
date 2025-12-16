@@ -1,7 +1,7 @@
-import { getCart } from "@/lib/network/api/cart";
-import { getCurrentUser } from "@/lib/network/api/auth";
-import { CartPageClient } from "./_components/cart-page-client";
 import { HeaderWrapper } from "@/components/header-wrapper";
+import { getCurrentUser } from "@/lib/network/api/auth";
+import { getCart } from "@/lib/network/api/cart";
+import { CartPageClient } from "./_components/cart-page-client";
 import { CartResponse } from "@/lib/types/main";
 
 export default async function CartPage() {
@@ -10,7 +10,7 @@ export default async function CartPage() {
   const authenticated = !!currentUser;
 
   const cartData = authenticated
-    ? (await getCart(currentUser.id)) || { items: [], total: 0, itemCount: 0 }
+    ? await getCart(currentUser.id)
     : { items: [], total: 0, itemCount: 0 };
 
   if (authenticated) {
@@ -22,7 +22,7 @@ export default async function CartPage() {
     <div className="min-h-screen">
       <HeaderWrapper />
       <CartPageClient
-        cart={cartData as any}
+        cart={cartData as CartResponse}
         isAuthenticated={authenticated}
       />
     </div>

@@ -1,11 +1,7 @@
 "use client";
 
-import { useActionState, useEffect } from "react";
-import { useRouter } from "next/navigation";
-import Image from "next/image";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import {
   Card,
   CardContent,
@@ -13,11 +9,14 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { Loader2 } from "lucide-react";
-import { createOrderAction } from "@/lib/actions/orders";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { createOrderAndCheckoutAction } from "@/lib/actions/payments";
 import type { CartItem } from "@/lib/types/main";
 import { getImageUrl } from "@/lib/utils/image";
+import { Loader2 } from "lucide-react";
+import Image from "next/image";
+import { useActionState, useEffect } from "react";
 import { toast } from "sonner";
 
 const initialState = {
@@ -31,34 +30,26 @@ interface CheckoutFormProps {
 }
 
 export function CheckoutForm({ cart, cartTotal }: CheckoutFormProps) {
-  const router = useRouter();
   const [state, formAction, isPending] = useActionState(
-    createOrderAction,
+    createOrderAndCheckoutAction,
     initialState
   );
 
   useEffect(() => {
-    if (state.success) {
-      toast.success("Order placed successfully!", {
-        description: "Your order has been confirmed. Redirecting to products page...",
-        duration: 5000,
-      });
-      // Delay redirect slightly so user sees the toast
-      setTimeout(() => {
-        router.push("/products");
-      }, 1500);
-    } else if (state.errors?.general) {
-      toast.error("Failed to place order", {
+    // Handle successful checkout - redirect to Stripe
+    if (state.success && (state as any).checkoutUrl) {
+      console.log("Redirecting to Stripe:", (state as any).checkoutUrl);
+      window.location.href = (state as any).checkoutUrl;
+    }
+
+    // Show error messages
+    if (state.errors?.general) {
+      toast.error("Failed to create checkout session", {
         description: state.errors.general[0],
         duration: 5000,
       });
     }
-  }, [state.success, state.errors, router]);
-
-  if (cart.length === 0 && !state.success) {
-    router.push("/cart");
-    return null;
-  }
+  }, [state.success, state.errors]);
 
   const total = cartTotal + (cartTotal >= 50 ? 0 : 9.99) + cartTotal * 0.08;
 
@@ -177,11 +168,11 @@ export function CheckoutForm({ cart, cartTotal }: CheckoutFormProps) {
               </CardHeader>
               <CardContent>
                 <Alert>
-                  <AlertTitle>Mock Checkout</AlertTitle>
+                  <AlertTitle>Secure Payment with Stripe</AlertTitle>
                   <AlertDescription>
-                    This is a demo checkout. No real payment will be processed.
-                    Click &quot;Place Order&quot; to simulate a successful
-                    payment.
+                    You will be redirected to Stripe&apos;s secure checkout page
+                    to complete your payment. Click &quot;Proceed to
+                    Payment&quot; to continue.
                   </AlertDescription>
                 </Alert>
               </CardContent>
@@ -195,7 +186,9 @@ export function CheckoutForm({ cart, cartTotal }: CheckoutFormProps) {
                   {isPending && (
                     <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                   )}
-                  Place Order - ${total.toFixed(2)}
+                  {isPending
+                    ? "Processing..."
+                    : `Proceed to Payment - $${total.toFixed(2)}`}
                 </Button>
               </CardFooter>
             </Card>

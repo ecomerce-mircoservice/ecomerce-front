@@ -28,4 +28,5 @@ export interface State<T = unknown> {
   success: boolean;
   errors: Record<string, string[]>;
   data?: ApiResponse<T> | null;
+  [key: string]: any; // Allow additional fields like checkoutUrl
 }

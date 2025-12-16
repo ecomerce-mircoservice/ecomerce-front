@@ -19,12 +19,12 @@ const nextConfig = {
       },
     ],
   },
-  webpack: (config, { dev, isServer }) => {
-    if (dev) {
-      config.devtool = false; // Disable source maps in dev
-    }
-    return config;
-  },
+  // webpack: (config, { dev, isServer }) => {
+  //   if (dev) {
+  //     config.devtool = false; // Disable source maps in dev
+  //   }
+  //   return config;
+  // },
   experimental: {
     serverActions: {
       bodySizeLimit: "4mb",
