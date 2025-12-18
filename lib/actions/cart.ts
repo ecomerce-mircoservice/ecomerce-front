@@ -32,7 +32,6 @@ export async function addToCartAction(
 ): Promise<State> {
     try {
         const authResult = await getUserIdOrAuthError();
-        console.log("[CartAction] Resolved UserID from API:", authResult.userId);
 
         if (!authResult.userId) {
             return authResult.state;
@@ -43,7 +42,6 @@ export async function addToCartAction(
             productId: Number(formData.get("productId")),
             quantity: Number(formData.get("quantity")),
         };
-        console.log("[CartAction] Payload:", data);
 
         const parsed = addToCartSchema.safeParse(data);
         if (!parsed.success) {

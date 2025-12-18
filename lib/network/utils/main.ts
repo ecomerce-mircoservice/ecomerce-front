@@ -194,7 +194,17 @@ export async function fetchData<T>(
       Authorization: `Bearer ${token}`,
     };
   }
-  const response = await fetch(serverAddress + input, init);
+
+  // Add timeout to prevent indefinite blocking
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), 30000); // 30 second timeout
+  
+  try {
+    const response = await fetch(serverAddress + input, {
+      ...init,
+      signal: controller.signal,
+    });
+    clearTimeout(timeoutId);
 
   // Determine if this is a file response based on Content-Type
   const contentType = response.headers.get("content-type") || "";
@@ -365,6 +375,18 @@ export async function fetchData<T>(
           `Request failed with status: ${response.status} message: ${errorMessage}`
         );
     }
+  }
+  } catch (error) {
+    clearTimeout(timeoutId);
+    
+    // Handle timeout errors
+    if (error instanceof Error && error.name === 'AbortError') {
+      logger.error({ url: serverAddress + input, error }, 'Request timeout');
+      throw new Error('Request timeout - the server took too long to respond. Please try again.');
+    }
+    
+    // Re-throw other errors
+    throw error;
   }
 }
 

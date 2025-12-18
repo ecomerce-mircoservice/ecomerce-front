@@ -200,7 +200,12 @@ export function ProductDetailClient({
                 className="mt-4 w-full"
                 disabled={product.stockQuantity === 0 || isPending}
               >
-                {added ? (
+                {isPending ? (
+                  <>
+                    <div className="mr-2 h-5 w-5 animate-spin rounded-full border-2 border-current border-t-transparent" />
+                    Adding...
+                  </>
+                ) : added ? (
                   <>
                     <Check className="mr-2 h-5 w-5" />
                     Added to Cart
